@@ -1,0 +1,34 @@
+.comment {
+  width: 100%;
+  border-radius: 10px;
+  margin: 5px 0;
+  background: #f4f4f4;
+}
+
+.postWrapper {
+  padding: 10px;
+}
+
+.postTopLeft {
+  display: flex;
+  align-items: center;
+}
+
+.postCommentImg {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.commentCenter{
+    margin: 10px 0;
+}
+
+.commentLikeCounter{
+    font-size: 12px;
+}
+
+.commentText{
+    font-size: 14px;
+}

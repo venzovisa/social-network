@@ -1,0 +1,12 @@
+{
+  "type": "better-sqlite3",
+  "database": "./src/data/data.sql",
+  "synchronize": true,
+  "logging": false,
+  "entities": [
+    "src/data/entities/**/*.ts"
+  ],
+  "migrations": [
+    "src/data/migration/**/*.ts"
+  ]
+}
