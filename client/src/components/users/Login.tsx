@@ -1,24 +1,24 @@
-import { React, useState, useContext, forwardRef, useEffect } from 'react';
+import { useState, useContext, forwardRef, useEffect, FocusEvent, ChangeEvent, MouseEvent } from 'react';
 import { LoadingButton } from '@mui/lab';
 import IconButton from '@mui/material/IconButton';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import MuiAlert from '@mui/material/Alert';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import { login } from '../../services/requests';
 import { AuthContext } from '../../context/AuthContext';
 import jwt from 'jsonwebtoken';
 import scrollToTop from '../../common/scrollToTop';
 
-const Alert = forwardRef(function Alert(props, ref) {
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function Login({ handleCloseModal }) {
+export default function Login({ handleCloseModal }: { handleCloseModal: () => void }) {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const { setLoginStatus, setUser } = useContext(AuthContext);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [snackbarState, setSnackbarState] = useState(false);
   const [loginDisabled, setLoginDisabled] = useState(true);
   const [loadingState, setLoadingState] = useState(false);
@@ -43,7 +43,7 @@ export default function Login({ handleCloseModal }) {
     setSnackbarState(true);
   };
 
-  const handleValidation = (e) => {
+  const handleValidation = (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
     if (e.target.name === 'username' && Number.isFinite(+e.target.value[0])) {
       return setErrors({ ...errors, [e.target.name]: "Не може да започва с число" });
     }
@@ -64,11 +64,11 @@ export default function Login({ handleCloseModal }) {
     setErrors({ ...errors });
   }
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setLoadingState(true);
     const token = await login(formData);

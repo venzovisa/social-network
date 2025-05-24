@@ -2,8 +2,9 @@ import calcTimeOffset from "../../common/calcTimeOffset";
 import { API } from "../../common/constants"
 import YouTube from "../embed/YouTube";
 import "./SingleFeedPopular.css";
+import { Post } from '../../types/types';
 
-const SingleFeedPopular = ({ content, picture, createdOn, likesCount, embed }) => {
+const SingleFeedPopular = ({ content, picture, createdOn, likesCount, embed }: Post) => {
 
   return (
     <div className="post">

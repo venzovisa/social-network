@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -10,25 +10,29 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import Typography from '@mui/material/Typography';
-import { API } from '../../common/constants.js'
+import { API } from '../../common/constants'
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Avatar, Chip, IconButton } from '@mui/material';
-import { AuthContext } from '../../context/AuthContext.js';
-import { useContext, useEffect } from 'react';
-import scrollToTop from '../../common/scrollToTop.js';
-import { acceptFriend, addFriend, deleteFriend, getUser, getUserPosts } from '../../services/requests.js';
-import calcPostRating from '../../common/calcPostRating.js';
+import { AuthContext } from '../../context/AuthContext';
+import scrollToTop from '../../common/scrollToTop';
+import { acceptFriend, addFriend, deleteFriend, getUser, getUserPosts } from '../../services/requests';
+import calcPostRating from '../../common/calcPostRating';
+import { Post, User } from '../../types/types';
 
-const SingleUser = ({ id, username, avatar, friends, handleDeleteUser, latitude }) => {
+type SingleUserProps = {
+  handleDeleteUser: (id: number) => void
+} & User
+
+const SingleUser = ({ id, username, avatar, friends, latitude, handleDeleteUser }: SingleUserProps) => {
   const { loginStatus, user, setUser } = useContext(AuthContext);
   const [rating, setRating] = useState(0);
-  const [friendsState, setFriendsState] = useState(friends);
+  const [friendsState, setFriendsState] = useState(friends || []);
 
 
   useEffect(() => {
     (async () => {
-      const result = await getUserPosts(id);
+      const result: Post[] = await getUserPosts(id);
       if (result && result.length > 0) {
         setRating(result.reduce((state, p) => {
           return (state += calcPostRating(p.likes))
@@ -53,7 +57,7 @@ const SingleUser = ({ id, username, avatar, friends, handleDeleteUser, latitude 
       ? <Button
         disableRipple
         disableFocusRipple
-        startIcon={<HourglassEmptyIcon size="medium" />}
+        startIcon={<HourglassEmptyIcon />}
       >Висящо
       </Button>
       : ''
@@ -63,43 +67,47 @@ const SingleUser = ({ id, username, avatar, friends, handleDeleteUser, latitude 
       ? <Button size="medium" startIcon={<CheckBoxIcon />} onClick={() => handleAcceptFriend(id)} >Приеми</Button>
       : ''
 
-  const handleAddFriend = async (id) => {
+  const handleAddFriend = async (id: number) => {
     await addFriend(id);
     const updatedFriends = [...friendsState];
-    const isFriend = updatedFriends.find(fr => fr.id === user.id)
-    console.log(isFriend)
+    const isFriend = updatedFriends.find(fr => fr.id === user.id);
     if (isFriend) {
-      console.log('vlizam v parviq if')
-      updatedFriends.find(fr => fr.id === user.id).friendshipStatus = 1
-      updatedFriends.find(fr => fr.id === user.id).canAcceptFriendship = true
+      const indexOfFriend = updatedFriends.indexOf(isFriend);
+      updatedFriends[indexOfFriend].friendshipStatus = 1
+      updatedFriends[indexOfFriend].canAcceptFriendship = true
     } else {
       updatedFriends.push({
         id: user.id,
         friendshipStatus: 1,
-        canAcceptFriendship: true
+        canAcceptFriendship: true,
+        avatar: user.avatar,
+        username: user.username,
       })
     }
     setFriendsState(updatedFriends);
   }
 
-  const handleRemoveFriend = async (id) => {
+  const handleRemoveFriend = async (id: number) => {
     await deleteFriend(id);
     const updatedFriends = [...friendsState];
-    updatedFriends.find(fr => fr.id === user.id).friendshipStatus = 0
+    updatedFriends.forEach(fr => {
+      if (fr.id === user.id) fr.friendshipStatus = 0
+    });
     setFriendsState(updatedFriends);
   }
 
-
-  const handleAcceptFriend = async (id) => {
+  const handleAcceptFriend = async (id: number) => {
     await acceptFriend(id);
     const updatedFriends = [...friendsState];
-    updatedFriends.find(fr => fr.id === user.id).friendshipStatus = 2
+    updatedFriends.forEach(fr => {
+      if (fr.id === user.id) fr.friendshipStatus = 2
+    });
     setFriendsState(updatedFriends);
     setUser(await getUser())
   }
 
 
-  const ratingColor = (rating) => {
+  const ratingColor = (rating: number) => {
     if (rating < 0) {
       return 'error'
     } else if (rating === 0) {

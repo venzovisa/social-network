@@ -1,3 +1,5 @@
+import { ChangeEvent, FormEvent, useContext, useState } from 'react';
+import { useHistory } from 'react-router';
 import { Grid, SwipeableDrawer } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
@@ -5,11 +7,9 @@ import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useContext, useState } from 'react';
-import { AppContext } from '../../context/AppContext';
-import { useHistory } from 'react-router';
-import SidebarPublic from '../../views/sidebar/SidebarPublic';
 import { Box } from '@mui/system';
+import SidebarPublic from '../../views/sidebar/SidebarPublic';
+import { AppContext } from '../../context/AppContext';
 
 const NavbarPublic = () => {
     const { setSearchQuery } = useContext(AppContext);
@@ -17,8 +17,7 @@ const NavbarPublic = () => {
     const history = useHistory();
     const [drawerState, setDrawerState] = useState(false);
 
-    const toggleDrawer = (open) => (event) => {
-        console.log(open);
+    const toggleDrawer = (open: boolean) => (event: KeyboardEvent) => {
         if (
             event &&
             event.type === 'keydown' &&
@@ -31,11 +30,11 @@ const NavbarPublic = () => {
     };
 
 
-    const handleSearch = (e) => {
+    const handleSearch = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setSearchInput(e.target.value);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (searchInput.length > 0) {
@@ -87,7 +86,7 @@ const NavbarPublic = () => {
                             mr: 2,
                             display: { xs: 'inline-flex', md: 'none' }
                         }}
-                        onClick={toggleDrawer(true)}
+                        onClick={() => toggleDrawer(true)}
                     >
                         <MenuIcon />
                     </IconButton>
@@ -101,8 +100,8 @@ const NavbarPublic = () => {
                 <SwipeableDrawer
                     anchor="right"
                     open={drawerState}
-                    onClose={toggleDrawer(false)}
-                    onOpen={toggleDrawer(true)}
+                    onClose={() => toggleDrawer(false)}
+                    onOpen={() => toggleDrawer(true)}
                 >
                     <SidebarPublic />
                 </SwipeableDrawer>

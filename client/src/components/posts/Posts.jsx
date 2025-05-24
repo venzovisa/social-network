@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react";
+import { motion } from 'framer-motion';
 import { AuthContext } from "../../context/AuthContext";
 import { getUserPosts } from "../../services/requests";
 import CreatePost from "./CreatePost";
 import SinglePost from "./SinglePost";
-import { motion } from 'framer-motion';
 
 const Posts = () => {
     const [posts, setPosts] = useState([]);

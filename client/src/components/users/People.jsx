@@ -1,8 +1,8 @@
+import { useContext, useEffect, useState } from "react";
 import { Grid } from "@mui/material";
 import Grow from '@mui/material/Grow';
-import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { acceptFriend, addFriend, deleteFriend, deleteUser, getUser, getUsers } from "../../services/requests";
+import { acceptFriend, addFriend, deleteFriend, deleteUser, getUser, getUsers } from "../../services/requests.js";
 import SingleUser from "./SingleUser";
 import { motion } from 'framer-motion';
 import scrollToTop from "../../common/scrollToTop";

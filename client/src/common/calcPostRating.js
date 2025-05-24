@@ -1,4 +1,4 @@
-import { REACTION_WEIGHT } from "./constants.js";
+import { REACTION_WEIGHT } from "./constants.ts";
 
 const calcPostRating = (likes) => {
   const grouped = likes.reduce((state, r) => {

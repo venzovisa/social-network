@@ -4,12 +4,11 @@
   "private": true,
   "dependencies": {
     "@babel/core": "7.12.3",
-    "@emotion/react": "^11.5.0",
-    "@emotion/styled": "^11.3.0",
-    "@material-ui/icons": "^4.11.2",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^5.1.0",
     "@mui/lab": "^5.0.0-alpha.55",
-    "@mui/material": "^5.1.0",
+    "@mui/material": "^5.17.1",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
     "@svgr/webpack": "5.5.0",
     "@testing-library/jest-dom": "^5.15.0",
@@ -83,7 +82,7 @@
   },
   "scripts": {
     "start": "node --openssl-legacy-provider scripts/start.js",
-    "build": "node scripts/build.js",
+    "build": "node --openssl-legacy-provider scripts/build.js",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
@@ -160,5 +159,10 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.5",
+    "typescript": "^5.8.3"
   }
 }

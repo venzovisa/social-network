@@ -1,7 +1,7 @@
 import sanitizeHtml from 'sanitize-html';
-import { SANITIZER_SETTINGS } from '../../common/constants.js';
+import { SANITIZER_SETTINGS } from '../../common/constants';
 
-const YouTube = ({ url }) => {
+const YouTube = ({ url }: { url: string }) => {
     const cleanURL = sanitizeHtml(url, SANITIZER_SETTINGS);
 
     return (

@@ -1,4 +1,4 @@
-import { React, useContext, useState } from 'react';
+import { ChangeEvent, MouseEvent, useContext, useState } from 'react';
 import { Alert, Backdrop, Button, Collapse, Fade, Modal, TextField, Tooltip } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -27,19 +27,27 @@ const style = {
   background: '#fff'
 };
 
+type Form = {
+  content: string;
+  isPublic: string;
+  embed: string;
+  file: string | Blob;
+}
+
 const CreatePost = () => {
   const { user } = useContext(AuthContext);
   const { setPosts } = useContext(AppContext);
-  const [formFields, setFormFields] = useState({
+  const [formFields, setFormFields] = useState<Form>({
     "content": "",
     "isPublic": "true",
-    "embed": ""
+    "embed": "",
+    "file": "",
   });
   const [publishDisabled, setPublishDisabled] = useState(true);
   const [isPublic, setIsPublic] = useState(true);
   const [openVideo, setOpenVideo] = useState(false);
   const [addVideoDisabled, setAddVideoDisabled] = useState(true);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [snackbarState, setSnackbarState] = useState(false);
 
   const handleVideoClose = () => {
@@ -55,7 +63,7 @@ const CreatePost = () => {
     setOpenVideo(true);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
 
     if (e.target.name === "content" && (e.target.value.length < 10 || e.target.value.length > 5000)) {
       setPublishDisabled(true);
@@ -66,18 +74,21 @@ const CreatePost = () => {
     setFormFields({ ...formFields, [e.target.name]: e.target.value, isPublic: String(isPublic) });
   }
 
-  const handleVideoChange = (e) => {
+  const handleVideoChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (e.target.name === "embed" && e.target.value.length < 43) {
       return setAddVideoDisabled(true);
     } else {
       setAddVideoDisabled(false);
     }
 
-    const embed = YOUTUBE_EMBED + (YOUTUBE_REGEX).exec(e.target.value)[1];
+    const match = (YOUTUBE_REGEX).exec(e.target.value);
+    if (!match) return;
+    const embed = YOUTUBE_EMBED + match[1];
     setFormFields({ ...formFields, [e.target.name]: embed });
   }
 
-  const handleFile = (e) => {
+  const handleFile = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files === null) return;
     if (!/\.(jpg|jpeg|png|gif)$/i.test(e.target.files[0]?.name)) {
       setErrors({ ...errors, [e.target.name]: 'Поддържани формати PNG/JPG/GIF' });
       return setSnackbarState(true);
@@ -90,7 +101,7 @@ const CreatePost = () => {
     setFormFields({ ...formFields, file: e.target.files[0] });
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const formData = new FormData();
 
@@ -110,7 +121,7 @@ const CreatePost = () => {
     }
 
     if (await createPost(formData)) {
-      setPosts(await getUserPosts())
+      setPosts(await getUserPosts(user.id));
     } else {
       return alert('Мрежова грешка. Моля опитайте по-късно.');
     }
@@ -256,7 +267,7 @@ const CreatePost = () => {
             <Button
               sx={{ m: 1 }}
               variant="outlined"
-              onClick={(e) => handleVideoDelete(e)}
+              onClick={handleVideoDelete}
             >
               Изтрий
             </Button>
@@ -264,7 +275,7 @@ const CreatePost = () => {
             <Button
               sx={{ m: 1 }}
               variant="outlined"
-              onClick={(e) => handleVideoClose(e)}
+              onClick={handleVideoClose}
             >
               Затвори
             </Button>

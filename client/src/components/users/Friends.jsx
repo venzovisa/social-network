@@ -1,7 +1,7 @@
 import { Grid, Grow } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import { API } from "../../common/constants";
-import { AuthContext } from "../../context/AuthContext";
+import { API } from "../../common/constants.ts";
+import { AuthContext } from "../../context/AuthContext.ts";
 import { acceptFriend, addFriend, deleteFriend, getUser, getUsers } from "../../services/requests";
 import SingleUser from "./SingleUser";
 import { motion } from 'framer-motion';

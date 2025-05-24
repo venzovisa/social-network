@@ -1,14 +1,15 @@
-import { API } from "../../common/constants"
+import { API } from "../../common/constants";
 import "./SinglePostComment.css";
 //import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Backdrop, Fade, IconButton, Modal } from "@mui/material";
-import UpdateComment from "./UpdateComment";
+import UpdateComment from "./UpdateComment.jsx";
 import { Box } from "@mui/system";
 import { useState } from "react";
 import calcTimeOffset from "../../common/calcTimeOffset";
 import { Link } from "react-router-dom";
 //import { deleteComment } from "../../services/requests";
+import { Comment } from "../../types/types";
 
 const style = {
   position: 'absolute',
@@ -23,7 +24,7 @@ const style = {
   background: '#fff'
 };
 
-const SingleUserComment = ({ id, author, content, createdOn, picture, likes, i }) => {
+const SingleUserComment = ({ id, author, content, createdOn, picture, likes, i }: Comment & { i: number }) => {
   const [openUpdate, setOpenUpdate] = useState(false);
   //const [commentContent, setCommentContent] = useState(content);
 
@@ -77,7 +78,7 @@ const SingleUserComment = ({ id, author, content, createdOn, picture, likes, i }
             <span className="commentLikeCounter">{likes.length} потребители харесват този коментар</span>
           </div>
           <div className="postBottomRight">
-            <IconButton aria-label="edit" onClick={() => handleUpdateOpen(id)}>
+            <IconButton aria-label="edit" onClick={handleUpdateOpen}>
               <EditIcon />
             </IconButton>
             {/* <IconButton aria-label="delete" onClick={() => handleDeleteComment(id)}>

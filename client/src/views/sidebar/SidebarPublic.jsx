@@ -10,8 +10,8 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import LoginIcon from '@mui/icons-material/Login';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import Login from "../../components/users/Login";
-import Register from "../../components/users/Register";
-import scrollToTop from "../../common/scrollToTop";
+import Register from "../../components/users/Register.tsx";
+import scrollToTop from "../../common/scrollToTop.ts";
 
 const style = {
     position: 'absolute',

@@ -3,10 +3,11 @@ import { AuthContext } from "../../context/AuthContext";
 import { getFeedPopular } from "../../services/requests";
 import CreatePost from "../posts/CreatePost";
 import SingleFeedPopular from "./SingleFeedPopular";
+import { Post } from "../../types/types";
 
 const FeedPopular = () => {
-    const { loggedStatus } = useContext(AuthContext);
-    const [posts, setPosts] = useState([]);
+    const { loginStatus } = useContext(AuthContext);
+    const [posts, setPosts] = useState<Post[]>([]);
 
     useEffect(() => {
         (async () => {
@@ -17,7 +18,7 @@ const FeedPopular = () => {
     return (
         <>
             <h2>Популярни</h2>
-            {loggedStatus && <CreatePost />}
+            {loginStatus && <CreatePost />}
             {
                 posts.length > 0 && posts.map(post => <SingleFeedPopular key={post.id} {...post} />)
             }

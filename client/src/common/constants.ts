@@ -44,9 +44,9 @@ export const YOUTUBE_REGEX = new RegExp(
   /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\\_]*)(&(amp;)?‌​[\w\\?‌​=]*)?/
 );
 
-export const POLITICAL_ORIENTATION = {
-  0: "neutral",
-  1: "socialist",
-  2: "democrat",
-  3: "nationalist",
-};
+export enum POLITICAL_ORIENTATION {
+  "neutral",
+  "socialist",
+  "democrat",
+  "nationalist",
+}

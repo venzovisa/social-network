@@ -1,4 +1,4 @@
-import { React, useContext, useState } from 'react';
+import { ChangeEvent, useContext, useState } from 'react';
 import { Button } from '@mui/material';
 import { createComment, getUserPosts } from '../../services/requests';
 import Grid from '@mui/material/Grid';
@@ -7,7 +7,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { API } from '../../common/constants';
 import { AppContext } from '../../context/AppContext';
 
-const CreateComment = ({ id }) => {
+const CreateComment = ({ id }: { id: number }) => {
   const { user } = useContext(AuthContext);
   const { setPosts } = useContext(AppContext);
   const [formFields, setFormFields] = useState({
@@ -16,7 +16,7 @@ const CreateComment = ({ id }) => {
   const [publishDisabled, setPublishDisabled] = useState(true);
 
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length < 10 || e.target.value.length > 500) {
       setPublishDisabled(true);
     } else {
@@ -26,10 +26,8 @@ const CreateComment = ({ id }) => {
     setFormFields({ ...formFields, [e.target.name]: e.target.value });
   }
 
-  const handleSubmit = async (e, id) => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) => {
     e.preventDefault();
-
-    console.log(formFields)
     if (await createComment(id, formFields)) {
       setPosts(await getUserPosts());
     } else {

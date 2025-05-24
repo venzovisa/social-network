@@ -2,17 +2,18 @@ import { useContext, useState } from "react"
 import { API } from "../../common/constants"
 import { AuthContext } from "../../context/AuthContext"
 import CreateComment from "../comments/CreateComment";
-import PostComments from "../comments/PostComments";
+import PostComments from "../comments/PostComments.jsx";
 import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Box } from "@mui/system";
-import { deletePost, getFeed, postsReactions } from "../../services/requests";
+import { deletePost, getFeed, postsReactions } from "../../services/requests.js";
 import { Collapse, Fade, Modal } from "@mui/material";
 import Backdrop from '@mui/material/Backdrop';
 import reactions from '../../reactions/reactions.js';
 import { AppContext } from "../../context/AppContext";
-import UpdatePost from "../posts/UpdatePost";
+import UpdatePost from "../posts/UpdatePost.jsx";
 import calcTimeOffset from "../../common/calcTimeOffset";
+import { Author } from "../../types/types";
 
 const style = {
   position: 'absolute',
@@ -27,7 +28,17 @@ const style = {
   background: '#fff'
 };
 
-const SingleFeed = ({ id, content, picture, author, createdOn, comments, likes }) => {
+type SingleFeedProps = {
+  id: number;
+  content: string;
+  picture: string;
+  author: Author;
+  createdOn: string;
+  comments: string[];
+  likes: number[];
+}
+
+const SingleFeed = ({ id, content, picture, author, createdOn, comments, likes }: SingleFeedProps) => {
   const { user } = useContext(AuthContext);
   const [commentForm, setCommentForm] = useState(false);
   const [anchorEl, setAnchorEl] = useState(false);
@@ -43,11 +54,8 @@ const SingleFeed = ({ id, content, picture, author, createdOn, comments, likes }
   const handleClick = () => {
     setAnchorEl(!anchorEl);
   };
-  const handleClose = () => {
-    setAnchorEl(false);
-  };
 
-  const handleLike = async (id, reaction) => {
+  const handleLike = async (id: number, reaction: number) => {
     if (await postsReactions(id, reaction)) {
       setPosts(await getFeed());
     } else {
@@ -67,7 +75,7 @@ const SingleFeed = ({ id, content, picture, author, createdOn, comments, likes }
 
   const renderComments = <div>
     <CreateComment id={id} />
-    <PostComments comments={comments} />
+    {/* <PostComments comments={comments} /> */}
   </div>
 
   return (
@@ -101,12 +109,11 @@ const SingleFeed = ({ id, content, picture, author, createdOn, comments, likes }
               </IconButton>
               <Box
                 className={anchorEl ? "menu-root menu-open" : "menu-root menu-close"}
-                onClose={handleClose}
               >
-                <p className="menu-item" onClick={handleUpdateOpen}>
+                <p className="menu-item" onClick={() => handleUpdateOpen()}>
                   Edit
                 </p>
-                <p className="menu-item" onClick={handleDelete}>
+                <p className="menu-item" onClick={() => handleDelete()}>
                   Delete
                 </p>
               </Box>
@@ -190,7 +197,8 @@ const SingleFeed = ({ id, content, picture, author, createdOn, comments, likes }
               handleCloseModal={handleUpdateClose}
               id={id}
               content={content}
-              setPosts={setPosts} />
+              handleUpdatePost={setPosts}
+            />
           </Box>
         </Fade>
       </Modal>

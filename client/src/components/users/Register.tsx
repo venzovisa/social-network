@@ -1,19 +1,19 @@
-import { React, useState, useContext, forwardRef } from 'react';
-import { Button, Collapse, IconButton, MenuItem, Select } from '@mui/material';
+import { useState, useContext, forwardRef, FocusEvent, ChangeEvent, MouseEvent } from 'react';
+import { Button, Collapse, IconButton, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import { Box } from '@mui/system';
-import MuiAlert from '@mui/material/Alert';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import CloseIcon from '@mui/icons-material/Close';
 import { logout, register } from '../../services/requests';
 import { AuthContext } from '../../context/AuthContext';
-const Alert = forwardRef(function Alert(props, ref) {
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref: any) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-export default function Register({ handleCloseModal }) {
+export default function Register({ handleCloseModal }: { handleCloseModal: () => void }) {
   document.title = "Register";
   const { setLoginStatus } = useContext(AuthContext);
-  const [formFields, setFormFields] = useState({ username: '', password: '', email: '', latitude: 0, longitude: 0 });
-  const [errors, setErrors] = useState({});
+  const [formFields, setFormFields] = useState({ username: '', password: '', email: '', latitude: '', longitude: '', file: '' });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [snackbarState, setSnackbarState] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -21,7 +21,7 @@ export default function Register({ handleCloseModal }) {
     setSnackbarState(true);
   };
 
-  const handleValidation = (e) => {
+  const handleValidation = (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
     if (e.target.name === 'username' && Number.isFinite(+e.target.value[0])) {
       return setErrors({ ...errors, [e.target.name]: "Не може да започва с число" });
     }
@@ -46,11 +46,11 @@ export default function Register({ handleCloseModal }) {
     setErrors({ ...errors });
   }
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
     setFormFields({ ...formFields, [e.target.name]: e.target.value });
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (Object.keys(errors).length > 0 ||
       formFields.username === '' ||
@@ -143,7 +143,7 @@ export default function Register({ handleCloseModal }) {
           id="select-status"
           value={formFields.latitude}
           name="latitude"
-          defaultValue={0}
+          defaultValue={'0'}
           displayEmpty={true}
           onChange={handleChange}
         >
@@ -155,7 +155,7 @@ export default function Register({ handleCloseModal }) {
           id="political-orientation"
           value={formFields.longitude}
           name="longitude"
-          defaultValue={0}
+          defaultValue={'0'}
           displayEmpty={true}
           onChange={handleChange}
         >

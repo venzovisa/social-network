@@ -12,22 +12,22 @@ import { Box } from "@mui/material";
 import SidebarPublic from "./views/sidebar/SidebarPublic";
 import SidebarPrivate from "./views/sidebar/SidebarPrivate";
 import { NotFound } from "./views/not-found/NotFound";
-import { AuthContext } from "./context/AuthContext";
+import { AuthContext } from "./context/AuthContext.ts";
 import { useEffect, useState } from "react";
-import { getToken } from "./common/getToken";
+import { getToken } from "./common/getToken.ts";
 import Posts from "./components/posts/Posts";
-import UserComments from "./components/comments/UserComments";
-import NavbarPublic from "./components/navbar/NavbarPublic";
+import UserComments from "./components/comments/UserComments.tsx";
+import NavbarPublic from "./components/navbar/NavbarPublic.tsx";
 import NavbarPrivate from "./components/navbar/NavbarPrivate";
 import { getUser } from "./services/requests";
 import SearchUsers from "./components/users/SearchUsers";
-import { AppContext } from "./context/AppContext";
+import { AppContext } from "./context/AppContext.ts";
 import FriendsRequest from "./components/users/FriendsRequests";
 import Friends from "./components/users/Friends";
 import UserProfile from "./components/users/UserProfile";
 import HomeView from "./components/home/HomeView";
 import People from "./components/users/People";
-import { POLITICAL_ORIENTATION } from "./common/constants";
+import { POLITICAL_ORIENTATION } from "./common/constants.ts";
 
 function App() {
   const [loggedStatus, setLoggedStatus] = useState(false);
@@ -48,7 +48,7 @@ function App() {
   }, [loggedStatus, setLoggedStatus, setUser]);
 
   return (
-    <div className={`wrapper ${POLITICAL_ORIENTATION[String(user.longitude)]}`}>
+    <div className={`wrapper ${POLITICAL_ORIENTATION[user.longitude]}`}>
       <AuthContext.Provider
         value={{
           loginStatus: loggedStatus,

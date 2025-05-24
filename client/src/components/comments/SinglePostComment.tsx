@@ -1,16 +1,17 @@
-import { API } from "../../common/constants"
+import { API } from "../../common/constants";
 import "./SinglePostComment.css";
 //import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Backdrop, Fade, IconButton, Modal } from "@mui/material";
-import UpdateComment from "./UpdateComment";
+import UpdateComment from "./UpdateComment.jsx";
 import { Box } from "@mui/system";
 import { useContext, useState } from "react";
 import calcTimeOffset from "../../common/calcTimeOffset";
 import { Link } from "react-router-dom";
-import { commentReactions, getSinglePost } from "../../services/requests";
+import { commentReactions, getSinglePost } from "../../services/requests.js";
 import scrollToTop from "../../common/scrollToTop";
 import { AuthContext } from "../../context/AuthContext";
+import { Comment } from "../../types/types";
 
 const style = {
   position: 'absolute',
@@ -25,7 +26,15 @@ const style = {
   background: '#fff'
 };
 
-const SinglePostComment = ({ id, author, content, createdOn, picture, likes, i, handleDeleteComment, setComms, postId }) => {
+type SinglePostCommentProps = {
+  i: number;
+  handleDeleteComment: () => void;
+  setComms: (comments: Comment[]) => void;
+  postId: number;
+  likes: { reaction: number }[]
+} & Comment;
+
+const SinglePostComment = ({ id, author, content, createdOn, picture, likes, i, handleDeleteComment, setComms, postId }: SinglePostCommentProps) => {
   const [openUpdate, setOpenUpdate] = useState(false);
   const { user } = useContext(AuthContext);
 
@@ -98,7 +107,7 @@ const SinglePostComment = ({ id, author, content, createdOn, picture, likes, i, 
             <span className="commentLikeCounter">{likes.filter(r => r.reaction === 2).length}</span>
           </div>
           <div className="postBottomRight">
-            {(user.role === 2 || user.id === author.id) && <IconButton aria-label="edit" onClick={() => handleUpdateOpen(id)}>
+            {(user.role === 2 || user.id === author.id) && <IconButton aria-label="edit" onClick={handleUpdateOpen}>
               <EditIcon />
             </IconButton>}
             {/* <IconButton aria-label="delete" onClick={() => handleDeleteComment(id)}>

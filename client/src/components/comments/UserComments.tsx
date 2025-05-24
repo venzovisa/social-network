@@ -2,9 +2,10 @@ import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { getUserComments } from "../../services/requests";
 import SingleUserComment from "./SingleUserComment";
+import { Comment } from "../../types/types";
 
 const UserComments = () => {
-    const [comments, setComments] = useState([]);
+    const [comments, setComments] = useState<Comment[]>([]);
 
     useEffect(() => {
         (async () => {

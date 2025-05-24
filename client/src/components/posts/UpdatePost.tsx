@@ -1,18 +1,31 @@
-import { React, useState, forwardRef, useEffect } from 'react';
+import { useState, forwardRef, useEffect, ChangeEvent, MouseEvent } from 'react';
 import { Button } from '@mui/material';
 import { updatePost } from '../../services/requests';
 import TextField from '@mui/material/TextField';
 import { Box } from '@mui/system';
 import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { YOUTUBE_EMBED, YOUTUBE_REGEX } from '../../common/constants';
-const Alert = forwardRef(function Alert(props, ref) {
+import { Post } from '../../types/types';
+
+type UpdatePostProps = {
+  handleCloseModal: () => void;
+  handleUpdatePost: (post: Post[]) => void;
+  id: number;
+  content: string;
+}
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-export default function UpdatePost({ handleCloseModal, handleUpdatePost, id, content }) {
-  const [formFields, setFormFields] = useState({ content: content || '', isPublic: 'true' });
+export default function UpdatePost({ handleCloseModal, handleUpdatePost, id, content }: UpdatePostProps) {
+  const [formFields, setFormFields] = useState<{
+    content: string;
+    isPublic: string;
+    file: string | Blob;
+    embed: string;
+  }>({ content: content || '', isPublic: 'true', file: '', embed: '' });
   const [snackbarState, setSnackbarState] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [publishDisabled, setPublishDisabled] = useState(true);
@@ -35,7 +48,7 @@ export default function UpdatePost({ handleCloseModal, handleUpdatePost, id, con
     setSnackbarState(false);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 
     if (e.target.name === "content" && e.target.value.length < 10) {
       setPublishDisabled(true);
@@ -46,12 +59,14 @@ export default function UpdatePost({ handleCloseModal, handleUpdatePost, id, con
     setFormFields({ ...formFields, [e.target.name]: e.target.value });
   }
 
-  const handleFile = (e) => {
-    setFormFields({ ...formFields, file: e.target.files[0] });
+  const handleFile = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const fields = (e.target as unknown as HTMLFormElement);
+    if (fields.files === null) return;
+    setFormFields({ ...formFields, file: fields.files[0] });
   }
 
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (formFields.content === '') {
       setSnackbarMessage('Попълнете задължителните полета');
@@ -64,8 +79,10 @@ export default function UpdatePost({ handleCloseModal, handleUpdatePost, id, con
     formData.append('isPublic', formFields.isPublic);
 
     if (formFields.embed) {
-      const embed = YOUTUBE_EMBED + (YOUTUBE_REGEX).exec(formFields.embed)[1];
-      formData.append('embed', embed);
+      const embed = YOUTUBE_EMBED + (YOUTUBE_REGEX).exec(formFields.embed);
+      if (embed) {
+        formData.append('embed', embed[1]);
+      }
     }
 
     if (formFields.file) {
@@ -76,7 +93,7 @@ export default function UpdatePost({ handleCloseModal, handleUpdatePost, id, con
 
     if (response?.id === id) {
       handleCloseModal();
-      handleUpdatePost(id);
+      handleUpdatePost(id as unknown as Post[]);
       return;
     }
 

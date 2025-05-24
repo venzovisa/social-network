@@ -1,5 +1,5 @@
-import { API } from "../common/constants";
-import { getToken } from "../common/getToken";
+import { API } from "../common/constants.ts";
+import { getToken } from "../common/getToken.ts";
 import jwt from "jsonwebtoken";
 
 export const login = async (loginData) => {

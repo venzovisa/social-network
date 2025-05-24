@@ -11,12 +11,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Box } from '@mui/system';
 import { motion } from 'framer-motion';
-import { AuthContext } from '../../context/AuthContext.js';
-import { API } from '../../common/constants.js';
+import { AuthContext } from '../../context/AuthContext.ts';
+import { API } from '../../common/constants.ts';
 import { useHistory } from 'react-router';
-import { AppContext } from '../../context/AppContext.js';
+import { AppContext } from '../../context/AppContext.ts';
 import WebsiteLogo from '../navbar/WebsiteLogo.jpg';
-import scrollToTop from '../../common/scrollToTop.js';
+import scrollToTop from '../../common/scrollToTop.ts';
 import SidebarPrivate from '../../views/sidebar/SidebarPrivate.jsx';
 
 const NavbarPrivate = () => {
@@ -38,7 +38,7 @@ const NavbarPrivate = () => {
         setDrawerState(open);
     };
 
-    const pendingFriends = user.friends?.filter(u => u.friendshipStatus === 1 && u.canAcceptFriendship).length;
+    const pendingFriends = user?.friends?.filter(u => u.friendshipStatus === 1 && u.canAcceptFriendship).length;
 
     const handleSearch = (e) => {
         setSearchInput(e.target.value);
@@ -62,7 +62,6 @@ const NavbarPrivate = () => {
                         drag
                         initial={{ scale: 1 }} animate={{ scale: 1.2 }}
                         transition={{ yoyo: Infinity, duration: 1 }}
-
                         className="website-logo"
                         src={WebsiteLogo}
                         alt="Website logo"

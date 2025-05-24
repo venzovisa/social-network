@@ -1,10 +1,10 @@
+import { useContext, useEffect, useState } from "react";
 import { Button, Grid } from "@mui/material";
 import Grow from '@mui/material/Grow';
-import { useContext, useEffect, useState } from "react";
+import { motion } from 'framer-motion';
 import { AuthContext } from "../../context/AuthContext";
 import { deleteUser, getUser, getUsers } from "../../services/requests";
 import SingleUser from "./SingleUser";
-import { motion } from 'framer-motion';
 import scrollToTop from "../../common/scrollToTop";
 
 const API = 'https://localhost:5000';

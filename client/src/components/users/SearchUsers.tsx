@@ -1,14 +1,15 @@
-import { Grid } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
+import { Grid } from "@mui/material";
 import scrollToTop from "../../common/scrollToTop";
 import { AppContext } from "../../context/AppContext";
 import { AuthContext } from "../../context/AuthContext";
-import { acceptFriend, addFriend, deleteFriend, getUser, getUsers } from "../../services/requests";
+import { deleteFriend, getUsers } from "../../services/requests";
 import SingleUser from "./SingleUser";
+import { User } from "../../types/types";
 
 const SearchUsers = () => {
-    const [users, setUsers] = useState([]);
-    const { user, setUser } = useContext(AuthContext);
+    const [users, setUsers] = useState<User[]>([]);
+    const { user } = useContext(AuthContext);
     const { searchQuery } = useContext(AppContext);
     scrollToTop();
     useEffect(() => {
@@ -27,23 +28,23 @@ const SearchUsers = () => {
     }, [setUsers, searchQuery])
 
 
-    const handleRemoveFriend = async (id) => {
+    const handleRemoveFriend = async (id: number) => {
         await deleteFriend(id)
         setUsers(await getUsers())
     }
 
-    const handleAddFriend = async (id) => {
-        await addFriend(id);
-        setUsers(await getUsers());
-        setUser(await getUser());
-    }
+    // const handleAddFriend = async (id: number) => {
+    //     await addFriend(id);
+    //     setUsers(await getUsers());
+    //     setUser(await getUser());
+    // }
 
 
-    const handleAcceptFriend = async (id) => {
-        await acceptFriend(id);
-        setUsers(await getUsers());
-        setUser(await getUser());
-    }
+    // const handleAcceptFriend = async (id: number) => {
+    //     await acceptFriend(id);
+    //     setUsers(await getUsers());
+    //     setUser(await getUser());
+    // }
 
     return (
         <>
@@ -57,9 +58,7 @@ const SearchUsers = () => {
                             <Grid key={user.id} item xs={3}>
                                 <SingleUser
                                     key={user.id}
-                                    handleRemoveFriend={handleRemoveFriend}
-                                    handleAddFriend={handleAddFriend}
-                                    handleAcceptFriend={handleAcceptFriend}
+                                    handleDeleteUser={handleRemoveFriend}
                                     {...user} />
                             </Grid>)
                     ) || <h2>Няма намерени съвпадения</h2>

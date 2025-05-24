@@ -1,8 +1,15 @@
 import { Box } from "@mui/system";
 import { useState } from "react";
 import SinglePostComment from "./SinglePostComment";
+import { Comment } from "../../types/types";
 
-const PostComments = ({ comments, handleDeleteComment, postId }) => {
+type PostCommentsProps = {
+    comments: Comment[];
+    handleDeleteComment: () => void;
+    postId: number;
+}
+
+const PostComments = ({ comments, handleDeleteComment, postId }: PostCommentsProps) => {
     const [comms, setComms] = useState(comments)
 
     let sortedComments = [...comms].sort((a, b) => a.id - b.id);
