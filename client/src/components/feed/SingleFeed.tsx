@@ -2,11 +2,9 @@ import { useContext, useState } from "react"
 import { API } from "../../common/constants"
 import { AuthContext } from "../../context/AuthContext"
 import CreateComment from "../comments/CreateComment";
-import PostComments from "../comments/PostComments.jsx";
 import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Box } from "@mui/system";
-import { deletePost, getFeed, postsReactions } from "../../services/requests.js";
 import { Collapse, Fade, Modal } from "@mui/material";
 import Backdrop from '@mui/material/Backdrop';
 import reactions from '../../reactions/reactions.js';
@@ -14,6 +12,7 @@ import { AppContext } from "../../context/AppContext";
 import UpdatePost from "../posts/UpdatePost.jsx";
 import calcTimeOffset from "../../common/calcTimeOffset";
 import { Author } from "../../types/types";
+import { usePostsReactionsMutation, useDeletePostMutation } from "../../api/apiSlice";
 
 const style = {
   position: 'absolute',
@@ -43,6 +42,8 @@ const SingleFeed = ({ id, content, picture, author, createdOn, comments, likes }
   const [commentForm, setCommentForm] = useState(false);
   const [anchorEl, setAnchorEl] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
+  const [postsReactions] = usePostsReactionsMutation();
+  const [deletePost] = useDeletePostMutation();
   const handleUpdateOpen = () => {
     setAnchorEl(false);
     setOpenUpdate(true);
@@ -56,18 +57,31 @@ const SingleFeed = ({ id, content, picture, author, createdOn, comments, likes }
   };
 
   const handleLike = async (id: number, reaction: number) => {
-    if (await postsReactions(id, reaction)) {
-      setPosts(await getFeed());
-    } else {
-      alert('Something went wrong');
+    // if (await postsReactions({id, reaction})) {
+    //   setPosts(await getFeed());
+    // } else {
+    //   alert('Something went wrong');
+    // }
+    try {
+      await postsReactions({ id, reaction });
+    } catch (error) {
+      console.error(error);
+      alert('Something went wrong while post reaction');
     }
   }
 
   const handleDelete = async () => {
-    if (await deletePost(id)) {
-      setPosts(await getFeed());
-    } else {
-      alert('Something went wrong');
+    // if (await deletePost({ id })) {
+    //   setPosts(await getFeed());
+    // } else {
+    //   alert('Something went wrong');
+    // }
+
+    try {
+      await deletePost({ id });
+    } catch (error) {
+      console.error(error);
+      alert('Something went wrong while delete post');
     }
 
     setAnchorEl(false);

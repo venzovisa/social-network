@@ -1,19 +1,13 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
+import { motion } from 'framer-motion';
 import { AuthContext } from "../../context/AuthContext.ts";
-import { getFeed } from "../../services/requests";
 import CreatePost from "../posts/CreatePost";
 import SinglePost from "../posts/SinglePost";
-import { motion } from 'framer-motion';
+import { useGetFeedQuery } from "../../api/apiSlice";
 
 const Feed = () => {
-    const [posts, setPosts] = useState([]);
     const { user } = useContext(AuthContext);
-
-    useEffect(() => {
-        (async () => {
-            setPosts(await getFeed());
-        })()
-    }, [setPosts])
+    const { data } = useGetFeedQuery(null);
 
     return (
         <>
@@ -23,7 +17,7 @@ const Feed = () => {
                 transition={{ duration: 1, type: 'spring', stiffness: 15 }}>Дебати</motion.h2>
             {!user?.latitude && <CreatePost />}
             {
-                posts && posts.map((post, index) => <motion.div drag
+                data && data.map((post, index) => <motion.div drag
                     initial={{ y: 1000 }}
                     animate={{ y: 0 }}
                     transition={{ type: 'tween', duration: 1, delay: index }}

@@ -4,6 +4,8 @@ import {
   Route,
   Redirect,
 } from "react-router-dom";
+import { Provider } from "react-redux";
+import { store } from "./store/store.ts";
 import Main from "./views/main/Main";
 import Users from "./components/users/Users";
 import Feed from "./components/feed/Feed";
@@ -67,118 +69,120 @@ function App() {
             setFriends1,
           }}
         >
-          <Router>
-            {loggedStatus ? <NavbarPrivate /> : <NavbarPublic />}
+          <Provider store={store}>
+            <Router>
+              {loggedStatus ? <NavbarPrivate /> : <NavbarPublic />}
 
-            <Box
-              sx={{
-                display: { xs: "flex" },
-                paddingLeft: "1rem",
-                paddingRight: "1rem",
-              }}
-            >
               <Box
                 sx={{
-                  flex: { md: "1.5 0 0", lg: "2 0 0", xl: "1 0 0" },
-                  display: { xs: "none", md: "block" },
+                  display: { xs: "flex" },
+                  paddingLeft: "1rem",
+                  paddingRight: "1rem",
                 }}
               >
-                {loggedStatus ? <SidebarPrivate /> : <SidebarPublic />}
-              </Box>
-              <Switch>
-                <Route exact path="/">
-                  <Main
-                    render={() => (
-                      <>
-                        <HomeView />
-                        <FeedPopular />
-                      </>
+                <Box
+                  sx={{
+                    flex: { md: "1.5 0 0", lg: "2 0 0", xl: "1 0 0" },
+                    display: { xs: "none", md: "block" },
+                  }}
+                >
+                  {loggedStatus ? <SidebarPrivate /> : <SidebarPublic />}
+                </Box>
+                <Switch>
+                  <Route exact path="/">
+                    <Main
+                      render={() => (
+                        <>
+                          <HomeView />
+                          <FeedPopular />
+                        </>
+                      )}
+                    />
+                  </Route>
+
+                  <Route exact path="/posts">
+                    {loggedStatus ? (
+                      <Main render={() => <Posts />} />
+                    ) : (
+                      <Redirect to="/" />
                     )}
-                  />
-                </Route>
+                  </Route>
 
-                <Route exact path="/posts">
-                  {loggedStatus ? (
-                    <Main render={() => <Posts />} />
-                  ) : (
-                    <Redirect to="/" />
-                  )}
-                </Route>
-
-                <Route exact path="/users">
-                  <Main
-                    render={() => <Users />}
-                    style={{ flex: { md: "3 0 0", lg: "4 0 0" } }}
-                  />
-                </Route>
-                <Route exact path="/users/people">
-                  <Main
-                    render={() => <People />}
-                    style={{ flex: { md: "3 0 0", lg: "4 0 0" } }}
-                  />
-                </Route>
-
-                <Route exact path="/users/search">
-                  <Main
-                    render={() => <SearchUsers />}
-                    style={{ flex: { md: "3 0 0", lg: "4 0 0" } }}
-                  />
-                </Route>
-
-                <Route exact path="/users/requests">
-                  {loggedStatus ? (
+                  <Route exact path="/users">
                     <Main
-                      render={() => <FriendsRequest />}
-                      style={{ flex: { md: "3 0 0" } }}
+                      render={() => <Users />}
+                      style={{ flex: { md: "3 0 0", lg: "4 0 0" } }}
                     />
-                  ) : (
-                    <Redirect to="/" />
-                  )}
-                </Route>
-
-                <Route exact path="/users/friends">
-                  {loggedStatus ? (
+                  </Route>
+                  <Route exact path="/users/people">
                     <Main
-                      render={() => <Friends />}
-                      style={{ flex: { md: "3 0 0" } }}
+                      render={() => <People />}
+                      style={{ flex: { md: "3 0 0", lg: "4 0 0" } }}
                     />
-                  ) : (
-                    <Redirect to="/" />
-                  )}
-                </Route>
+                  </Route>
 
-                <Route exact path="/users/comments">
-                  {loggedStatus ? (
-                    <Main render={() => <UserComments />} />
-                  ) : (
-                    <Redirect to="/" />
-                  )}
-                </Route>
+                  <Route exact path="/users/search">
+                    <Main
+                      render={() => <SearchUsers />}
+                      style={{ flex: { md: "3 0 0", lg: "4 0 0" } }}
+                    />
+                  </Route>
 
-                <Route path="/users/profile/:id">
-                  {loggedStatus ? (
-                    <Main render={() => <UserProfile />} />
-                  ) : (
-                    <Redirect to="/" />
-                  )}
-                </Route>
+                  <Route exact path="/users/requests">
+                    {loggedStatus ? (
+                      <Main
+                        render={() => <FriendsRequest />}
+                        style={{ flex: { md: "3 0 0" } }}
+                      />
+                    ) : (
+                      <Redirect to="/" />
+                    )}
+                  </Route>
 
-                <Route exact path="/feed">
-                  {loggedStatus ? (
-                    <Main render={() => <Feed />} />
-                  ) : (
-                    <Redirect to="/" />
-                  )}
-                </Route>
+                  <Route exact path="/users/friends">
+                    {loggedStatus ? (
+                      <Main
+                        render={() => <Friends />}
+                        style={{ flex: { md: "3 0 0" } }}
+                      />
+                    ) : (
+                      <Redirect to="/" />
+                    )}
+                  </Route>
 
-                <Route path="*">
-                  <Main render={() => <NotFound />} />
-                </Route>
-              </Switch>
+                  <Route exact path="/users/comments">
+                    {loggedStatus ? (
+                      <Main render={() => <UserComments />} />
+                    ) : (
+                      <Redirect to="/" />
+                    )}
+                  </Route>
 
-              <Box sx={{ flex: { lg: "1 0 0" } }}></Box>
-            </Box>
-          </Router>
+                  <Route path="/users/profile/:id">
+                    {loggedStatus ? (
+                      <Main render={() => <UserProfile />} />
+                    ) : (
+                      <Redirect to="/" />
+                    )}
+                  </Route>
+
+                  <Route exact path="/feed">
+                    {loggedStatus ? (
+                      <Main render={() => <Feed />} />
+                    ) : (
+                      <Redirect to="/" />
+                    )}
+                  </Route>
+
+                  <Route path="*">
+                    <Main render={() => <NotFound />} />
+                  </Route>
+                </Switch>
+
+                <Box sx={{ flex: { lg: "1 0 0" } }}></Box>
+              </Box>
+            </Router>
+          </Provider>
         </AppContext.Provider>
       </AuthContext.Provider>
     </div>

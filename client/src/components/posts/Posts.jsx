@@ -1,25 +1,20 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { motion } from 'framer-motion';
 import { AuthContext } from "../../context/AuthContext";
-import { getUserPosts } from "../../services/requests";
 import CreatePost from "./CreatePost";
 import SinglePost from "./SinglePost";
+import { useGetPostsQuery } from "../../api/apiSlice";
 
 const Posts = () => {
-    const [posts, setPosts] = useState([]);
     const { user } = useContext(AuthContext);
-    useEffect(() => {
-        (async () => {
-            setPosts(await getUserPosts(user.id));
-        })()
-    }, [user.id])
+    const { data } = useGetPostsQuery(user.id);
 
     return (
         <>
             <h2>Лични публикации</h2>
             {!user.latitude && <CreatePost />}
             {
-                posts?.length > 0 && posts.map(post => <motion.div key={post.id} drag> <SinglePost  {...post} setPosts={setPosts} /> </motion.div>)
+                data?.length > 0 && data.map(post => <motion.div key={post.id} drag> <SinglePost  {...post} /> </motion.div>)
             }
         </>
     )

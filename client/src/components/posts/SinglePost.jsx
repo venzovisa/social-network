@@ -5,18 +5,17 @@ import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Box } from "@mui/system";
 import Backdrop from '@mui/material/Backdrop';
-import { deleteComment, deletePost, getUserPosts, postsReactions } from "../../services/requests";
+import { postsReactions } from "../../services/requests";
 import { API } from "../../common/constants.ts"
 import { AuthContext } from "../../context/AuthContext.ts"
 import CreateComment from "../comments/CreateComment.tsx";
 import PostComments from "../comments/PostComments";
 import UpdatePost from "./UpdatePost";
 import reactions from '../../reactions/reactions.js';
-import { AppContext } from "../../context/AppContext.ts";
 import YouTube from "../embed/YouTube.tsx";
 import calcTimeOffset from "../../common/calcTimeOffset.ts";
 import scrollToTop from "../../common/scrollToTop.ts";
-
+import { useDeletePostMutation, useDeleteCommentMutation } from "../../api/apiSlice";
 
 const style = {
   position: 'absolute',
@@ -33,12 +32,13 @@ const style = {
 
 const SinglePost = ({ id, content, picture, author, createdOn, comments, likes, embed }) => {
   const { user } = useContext(AuthContext);
-  const { setPosts } = useContext(AppContext);
   const [commentForm, setCommentForm] = useState(false);
   const [anchorEl, setAnchorEl] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [reactionsList, setReactionsList] = useState(false);
   const [reactionStats, setReactionStats] = useState(false);
+  const [deletePost] = useDeletePostMutation();
+  const [deleteComment] = useDeleteCommentMutation();
 
   const handleUpdateOpen = () => {
     setAnchorEl(false);
@@ -56,25 +56,26 @@ const SinglePost = ({ id, content, picture, author, createdOn, comments, likes, 
 
   const handleLike = async (id, reaction) => {
     if (await postsReactions(id, reaction)) {
-      setPosts(await getUserPosts(user.id));
+      // setPosts(await getUserPosts(user.id));
     } else {
       alert('Нещо се обърка');
     }
   }
 
-  const handleUpdatePost = async (id) => {
-    const result = await getUserPosts(user.id);
-    if (result) {
-      setPosts(result);
-    } else {
-      alert('Нещо се обърка');
-    }
-  }
+  // const handleUpdatePost = async (id) => {
+  //   const result = await getUserPosts(user.id);
+  //   if (result) {
+  //     setPosts(result);
+  //   } else {
+  //     alert('Нещо се обърка');
+  //   }
+  // }
 
   const handleDeletePost = async () => {
-    if (await deletePost(id)) {
-      setPosts(await getUserPosts(user.id));
-    } else {
+    try {
+      await deletePost(id);
+    } catch (error) {
+      console.error(error);
       alert('Нещо се обърка');
     }
 
@@ -83,7 +84,7 @@ const SinglePost = ({ id, content, picture, author, createdOn, comments, likes, 
 
   const handleDeleteComment = async (id) => {
     if (await deleteComment(id)) {
-      setPosts(await getUserPosts(user.id));
+      //setPosts(await getUserPosts(user.id));
     } else {
       alert('Нещо се обърка');
     }
@@ -240,10 +241,9 @@ const SinglePost = ({ id, content, picture, author, createdOn, comments, likes, 
           <Box sx={style}>
             <UpdatePost
               handleCloseModal={handleUpdateClose}
-              handleUpdatePost={handleUpdatePost}
               id={id}
               content={content}
-              setPosts={setPosts} />
+            />
           </Box>
         </Fade>
       </Modal>

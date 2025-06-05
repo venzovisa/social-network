@@ -1,25 +1,21 @@
 import { Box } from "@mui/system";
-import { useEffect, useState } from "react";
-import { getUserComments } from "../../services/requests";
 import SingleUserComment from "./SingleUserComment";
-import { Comment } from "../../types/types";
+import { useGetUserCommentsQuery } from "../../api/apiSlice";
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
 
 const UserComments = () => {
-    const [comments, setComments] = useState<Comment[]>([]);
-
-    useEffect(() => {
-        (async () => {
-            setComments(await getUserComments());
-        })()
-    }, [setComments])
+    const { user } = useContext(AuthContext);
+    const { data } = useGetUserCommentsQuery(user.id);
+    console.log("Comments", data);
 
     return (
         <>
             <h2>Лични реплики</h2>
             <Box sx={{ background: '#fff', padding: '1rem', borderRadius: '10px' }}>
                 {
-                    (comments && comments.length > 0)
-                        ? comments.map((comment, i) =>
+                    (data && data.length > 0)
+                        ? data.map((comment, i) =>
                             <Box key={comment.id}>
                                 <SingleUserComment i={i} {...comment} />
                                 <div style={{ backgroundColor: '#f4f4f4', height: '1px' }}></div>

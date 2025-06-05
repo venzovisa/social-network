@@ -1,6 +1,5 @@
 import { useState, forwardRef, useEffect, ChangeEvent, MouseEvent } from 'react';
 import { Button } from '@mui/material';
-import { updatePost } from '../../services/requests';
 import TextField from '@mui/material/TextField';
 import { Box } from '@mui/system';
 import Snackbar from '@mui/material/Snackbar';
@@ -8,28 +7,24 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { YOUTUBE_EMBED, YOUTUBE_REGEX } from '../../common/constants';
-import { Post } from '../../types/types';
+import { UpdatePostForm } from '../../types/types';
+import { useUpdatePostMutation } from '../../api/apiSlice';
 
 type UpdatePostProps = {
   handleCloseModal: () => void;
-  handleUpdatePost: (post: Post[]) => void;
   id: number;
   content: string;
 }
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-export default function UpdatePost({ handleCloseModal, handleUpdatePost, id, content }: UpdatePostProps) {
-  const [formFields, setFormFields] = useState<{
-    content: string;
-    isPublic: string;
-    file: string | Blob;
-    embed: string;
-  }>({ content: content || '', isPublic: 'true', file: '', embed: '' });
+export default function UpdatePost({ handleCloseModal, id, content }: UpdatePostProps) {
+  const [formFields, setFormFields] = useState<UpdatePostForm>({ content: content || '', isPublic: 'true', file: '', embed: '' });
   const [snackbarState, setSnackbarState] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [publishDisabled, setPublishDisabled] = useState(true);
   const [isPublic, setIsPublic] = useState(true);
+  const [updatePost] = useUpdatePostMutation();
 
   useEffect(() => {
     if (formFields.content.length < 10) {
@@ -89,11 +84,13 @@ export default function UpdatePost({ handleCloseModal, handleUpdatePost, id, con
       formData.append('file', formFields.file);
     }
 
-    const response = await updatePost(id, formData);
+    //const response = await updatePost(id, formData);
+    console.log(JSON.stringify(formData));
+    const response = await updatePost({ id, data: formData }).unwrap();
 
     if (response?.id === id) {
       handleCloseModal();
-      handleUpdatePost(id as unknown as Post[]);
+      //  handleUpdatePost(id as unknown as Post[]);
       return;
     }
 

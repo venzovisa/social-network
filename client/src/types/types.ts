@@ -53,3 +53,10 @@ export type User = {
   longitude: number;
   friends: Friend[];
 };
+
+export type UpdatePostForm = {
+  content: string;
+  isPublic: string;
+  file: string | Blob;
+  embed: string;
+};

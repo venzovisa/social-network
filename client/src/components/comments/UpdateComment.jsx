@@ -1,10 +1,10 @@
-import { React, useState, forwardRef, useEffect } from 'react';
+import { useState, forwardRef, useEffect } from 'react';
 import { Button, Collapse, IconButton } from '@mui/material';
-import { updateComment } from '../../services/requests';
 import TextField from '@mui/material/TextField';
 import { Box } from '@mui/system';
 import MuiAlert from '@mui/material/Alert';
 import CloseIcon from '@mui/icons-material/Close';
+import { useUpdateCommentMutation } from '../../api/apiSlice';
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
@@ -14,6 +14,7 @@ export default function UpdateComment({ handleCloseModal, id, content }) {
   const [snackbarState, setSnackbarState] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState(false);
   const [publishDisabled, setPublishDisabled] = useState(true);
+  const [updateComment] = useUpdateCommentMutation();
   useEffect(() => {
     if (formFields.content.length < 10) {
       setPublishDisabled(true);
@@ -44,7 +45,7 @@ export default function UpdateComment({ handleCloseModal, id, content }) {
       return handleOpen();
     }
 
-    const response = await updateComment(id, formFields);
+    const response = await updateComment({ id, ...formFields }).unwrap();
 
     if (response?.id === id) {
       handleCloseModal();

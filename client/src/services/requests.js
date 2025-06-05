@@ -56,32 +56,6 @@ export const register = async (loginData) => {
   }
 };
 
-export const updateUser = async (updateData) => {
-  const token = getToken();
-  if (!token) {
-    return null;
-  }
-
-  try {
-    const response = await fetch(`${API}/users`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: updateData,
-    });
-
-    if (response.status === 201) {
-      return response.json();
-    }
-
-    return { status: response.status };
-  } catch (err) {
-    console.error(err?.message);
-    return null;
-  }
-};
-
 export const deleteUser = async (id) => {
   const token = getToken();
   if (!token) {
@@ -132,46 +106,6 @@ export const banUser = async (id) => {
   }
 };
 
-export const getFeedPopular = async () => {
-  try {
-    const response = await fetch(`${API}/feed/popular`);
-
-    if (response.status === 200) {
-      return await response.json();
-    }
-
-    return [];
-  } catch (err) {
-    console.error(err?.message);
-    return [];
-  }
-};
-
-export const getFeed = async () => {
-  const token = getToken();
-  if (!token) {
-    return [];
-  }
-
-  try {
-    const response = await fetch(`${API}/feed`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (response.status === 200) {
-      return await response.json();
-    }
-
-    return [];
-  } catch (err) {
-    console.error(err?.message);
-    return [];
-  }
-};
-
 export const createPost = async (postData) => {
   const token = getToken();
   if (!token) {
@@ -192,57 +126,6 @@ export const createPost = async (postData) => {
     }
 
     return null;
-  } catch (err) {
-    console.error(err?.message);
-    return null;
-  }
-};
-
-export const updatePost = async (id, updateData) => {
-  const token = getToken();
-  if (!token) {
-    return null;
-  }
-
-  try {
-    const response = await fetch(`${API}/posts/${id}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: updateData,
-    });
-
-    if (response.status === 200) {
-      return response.json();
-    }
-
-    return { status: response.status };
-  } catch (err) {
-    console.error(err?.message);
-    return null;
-  }
-};
-
-export const deletePost = async (id) => {
-  const token = getToken();
-  if (!token) {
-    return null;
-  }
-
-  try {
-    const response = await fetch(`${API}/posts/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (response.status === 201) {
-      return response.json();
-    }
-
-    return { status: response.status };
   } catch (err) {
     console.error(err?.message);
     return null;
@@ -300,34 +183,6 @@ export const postsReactions = async (postID, reaction) => {
   } catch (err) {
     console.error(err?.message);
     return null;
-  }
-};
-
-export const getUserComments = async () => {
-  const token = getToken();
-  if (!token) {
-    return [];
-  }
-
-  try {
-    const response = await fetch(
-      `${API}/users/${jwt.decode(token).id}/comments`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    if (response.status === 200) {
-      return await response.json();
-    }
-
-    return [];
-  } catch (err) {
-    console.error(err?.message);
-    return [];
   }
 };
 
@@ -511,32 +366,6 @@ export const createComment = async (id, postData) => {
   }
 };
 
-export const updateComment = async (id, postData) => {
-  const token = getToken();
-  if (!token) {
-    return null;
-  }
-
-  try {
-    const response = await fetch(`${API}/comments/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(postData),
-    });
-
-    if (response.status === 200) {
-      return response.json();
-    }
-
-    return null;
-  } catch (err) {
-    console.error(err?.message);
-    return null;
-  }
-};
 export const deleteComment = async (id) => {
   const token = getToken();
   if (!token) {
@@ -559,59 +388,5 @@ export const deleteComment = async (id) => {
   } catch (err) {
     console.error(err?.message);
     return null;
-  }
-};
-
-export const commentReactions = async (commentID, reaction) => {
-  const token = getToken();
-  if (!token) {
-    return null;
-  }
-
-  try {
-    const response = await fetch(`${API}/comments/${commentID}/react`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        reaction,
-      }),
-    });
-
-    if (response.status === 200) {
-      return response.json();
-    }
-
-    return null;
-  } catch (err) {
-    console.error(err?.message);
-    return null;
-  }
-};
-
-export const getSinglePost = async (id) => {
-  const token = getToken();
-  if (!token) {
-    return [];
-  }
-
-  try {
-    const response = await fetch(`${API}/posts/${id}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (response.status === 200) {
-      return await response.json();
-    }
-
-    return [];
-  } catch (err) {
-    console.error(err?.message);
-    return [];
   }
 };

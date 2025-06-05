@@ -7,12 +7,11 @@ import { PermMedia } from "@mui/icons-material"
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import CloseIcon from '@mui/icons-material/Close';
 import { AuthContext } from '../../context/AuthContext';
-import { AppContext } from '../../context/AppContext';
 import { API, YOUTUBE_EMBED, YOUTUBE_REGEX } from '../../common/constants';
-import { createPost, getUserPosts } from '../../services/requests';
 import "./CreatePost.css";
 import { Box } from '@mui/system';
 import YouTube from "../embed/YouTube";
+import { useCreatePostMutation } from '../../api/apiSlice';
 
 const style = {
   position: 'absolute',
@@ -36,7 +35,6 @@ type Form = {
 
 const CreatePost = () => {
   const { user } = useContext(AuthContext);
-  const { setPosts } = useContext(AppContext);
   const [formFields, setFormFields] = useState<Form>({
     "content": "",
     "isPublic": "true",
@@ -49,6 +47,7 @@ const CreatePost = () => {
   const [addVideoDisabled, setAddVideoDisabled] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [snackbarState, setSnackbarState] = useState(false);
+  const [createPost] = useCreatePostMutation();
 
   const handleVideoClose = () => {
     setOpenVideo(false);
@@ -120,10 +119,18 @@ const CreatePost = () => {
       formData.append('file', formFields.file);
     }
 
-    if (await createPost(formData)) {
-      setPosts(await getUserPosts(user.id));
-    } else {
-      return alert('Мрежова грешка. Моля опитайте по-късно.');
+    // if (await createPost(formData)) {
+    //   setPosts(await getUserPosts(user.id));
+    // } else {
+
+    // }
+
+    try {
+      console.log(JSON.stringify(formData));
+      await createPost(formData);
+    } catch (error) {
+      console.log(error);
+      alert('Мрежова грешка. Моля опитайте по-късно.');
     }
   }
 

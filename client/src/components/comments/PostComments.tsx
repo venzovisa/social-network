@@ -1,7 +1,7 @@
 import { Box } from "@mui/system";
-import { useState } from "react";
 import SinglePostComment from "./SinglePostComment";
 import { Comment } from "../../types/types";
+import { useGetPostCommentsQuery } from "../../api/apiSlice";
 
 type PostCommentsProps = {
     comments: Comment[];
@@ -9,10 +9,10 @@ type PostCommentsProps = {
     postId: number;
 }
 
-const PostComments = ({ comments, handleDeleteComment, postId }: PostCommentsProps) => {
-    const [comms, setComms] = useState(comments)
+const PostComments = ({ handleDeleteComment, postId }: PostCommentsProps) => {
+    const { data: comments } = useGetPostCommentsQuery(postId);
 
-    let sortedComments = [...comms].sort((a, b) => a.id - b.id);
+    let sortedComments = [...comments || []].sort((a, b) => a.id - b.id);
 
     return (
         <div style={{ padding: '0 1rem 1rem' }}>
@@ -20,7 +20,7 @@ const PostComments = ({ comments, handleDeleteComment, postId }: PostCommentsPro
                 (sortedComments && sortedComments.length > 0)
                     ? sortedComments.map((comment, i) =>
                         <Box key={comment.id}>
-                            <SinglePostComment i={i} postId={postId} setComms={setComms} {...comment} handleDeleteComment={handleDeleteComment} />
+                            <SinglePostComment i={i} postId={postId} {...comment} handleDeleteComment={handleDeleteComment} />
                             <div style={{ backgroundColor: '#f4f4f4', height: '1px' }}></div>
                         </Box>)
                     : <p>Няма коментари все още</p>

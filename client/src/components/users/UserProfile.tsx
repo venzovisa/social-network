@@ -3,11 +3,10 @@ import { useParams } from "react-router";
 import { Avatar, Button } from "@mui/material";
 import EmailIcon from '@mui/icons-material/Email';
 import { API } from "../../common/constants";
-import { getUserDetails, getUserPosts, updateUser } from "../../services/requests";
 import SinglePost from "../posts/SinglePost";
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { AuthContext } from "../../context/AuthContext";
-import { Post, User } from "../../types/types";
+import { useGetPostsQuery, useGetUserDetailsQuery, useUpdateUserMutation } from "../../api/apiSlice";
 
 /*
 {
@@ -27,11 +26,12 @@ import { Post, User } from "../../types/types";
 
 const UserProfile = () => {
     const { user, setUser } = useContext(AuthContext);
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [userCurrent, setUserCurrent] = useState<User>();
     const [formFields, setFormFields] = useState<{ file: Blob | string }>({ file: '' });
     const [renderUpload, setRenderUpload] = useState(false);
     const params = useParams<{ id: string }>();
+    const { data: posts } = useGetPostsQuery(user.id);
+    const { data: currentUser } = useGetUserDetailsQuery(params.id);
+    const [updateUser] = useUpdateUserMutation();
 
     const handleFile = async (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
@@ -42,34 +42,24 @@ const UserProfile = () => {
         const formData = new FormData();
         formData.append('file', formFields.file);
         await updateUser(formData);
-        const userDetails = await getUserDetails(params.id);
 
-        if (userDetails) {
-            setUserCurrent(userDetails);
-            setUser(userDetails);
+        if (currentUser) {
+            setUser(currentUser);
         } else {
             alert("Нещо се обърка");
         }
     }
-
-    useEffect(() => {
-        (async () => {
-            setPosts(await getUserPosts(params.id));
-            setUserCurrent(await getUserDetails(params.id));
-        })();
-        return () => { }
-    }, [params.id, posts]);
 
     return (
         <>
             <h2>Досие</h2>
             <div style={{ textAlign: 'center' }}>
                 {
-                    userCurrent?.avatar &&
+                    currentUser?.avatar &&
                     <Avatar
                         sx={{ width: 192, height: 192, margin: '0 auto' }}
-                        alt={`${userCurrent?.username}`}
-                        src={`${API}/${userCurrent?.avatar}`}
+                        alt={`${currentUser?.username}`}
+                        src={`${API}/${currentUser?.avatar}`}
                     />
                 }
 
@@ -85,7 +75,7 @@ const UserProfile = () => {
                 } */}
 
                 {
-                    (user.id === userCurrent?.id || user.role === 2) &&
+                    (user.id === currentUser?.id || user.role === 2) &&
                     <p>
                         <Button
                             variant="contained"
@@ -112,7 +102,7 @@ const UserProfile = () => {
                 }
                 <p>
                     <a
-                        href={`http://mailto:${userCurrent?.email}`}
+                        href={`http://mailto:${currentUser?.email}`}
                         target="_blank"
                         rel="noreferrer"
                         style={{ textDecoration: 'none' }} >
@@ -123,7 +113,7 @@ const UserProfile = () => {
                 </p>
             </div>
             {
-                posts?.length > 0 && posts.map(post => <SinglePost key={post.id} {...post} />)
+                posts && posts?.length > 0 && posts.map(post => <SinglePost key={post.id} {...post} />)
             }
         </>
     )
